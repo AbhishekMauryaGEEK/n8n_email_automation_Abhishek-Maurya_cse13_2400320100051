@@ -1,0 +1,181 @@
+{
+  "name": "Form to Google Sheet and Email",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Contact Us",
+        "formDescription": "Leave your name, email and a message.",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "fieldName": "name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Email",
+              "fieldType": "email",
+              "fieldName": "email",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Message",
+              "fieldType": "textarea",
+              "fieldName": "message",
+              "requiredField": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "e8d2142b-e7b9-4831-84a6-a5747fc1cd24",
+      "name": "Contact Form",
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.7,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "12c817f0-3f58-47a6-b39e-6597e1fa6c7f"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "mode": "url",
+          "value": "https://docs.google.com/spreadsheets/d/1vRl1Y6ofk5ZwO5tCmwun2uVe8nMBaFU8zCueGM-kSqU/edit?usp=sharing"
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "name",
+          "value": "Sheet1"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.name }}",
+            "Email": "={{ $json.email }}",
+            "Message": "={{ $json.message }}",
+            "Submitted At": "={{ $json.submittedAt }}"
+          },
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Email",
+              "displayName": "Email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Message",
+              "displayName": "Message",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submitted At",
+              "displayName": "Submitted At",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "2b474ff2-2e1f-4bc6-a112-aaa81fff43c8",
+      "name": "Save to Spreadsheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        224,
+        0
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "LTGweN5EvZskJQSX",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sendTo": "={{ $('Contact Form').item.json.email }}",
+        "subject": "=Thanks for your message, {{ $('Contact Form').item.json.name }}",
+        "message": "=<p>Hi {{ $('Contact Form').item.json.name }},</p><p>Thanks for reaching out. We received your message:</p><blockquote>{{ $('Contact Form').item.json.message }}</blockquote><p>We'll get back to you soon.</p>",
+        "options": {
+          "appendAttribution": false
+        }
+      },
+      "id": "9292f6a3-dd5e-4dcf-8d80-bc8968f4d7ce",
+      "name": "Email the Person",
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        448,
+        0
+      ],
+      "webhookId": "3a6c025c-66fe-498e-83be-b1c5fee0dbfd",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "XZhmzGUczf5A1kt1",
+          "name": "Gmail account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Contact Form": {
+      "main": [
+        [
+          {
+            "node": "Save to Spreadsheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Save to Spreadsheet": {
+      "main": [
+        [
+          {
+            "node": "Email the Person",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "8dd385a5-689d-4aa2-a725-3bf02de850c6",
+  "meta": {
+    "instanceId": "e17cef8b2e17585d78326ef68e0cbf3aa0227715673efd4f9af861e5af32e340"
+  },
+  "nodeGroups": [],
+  "id": "rri6RfMK3nk2i4Ye",
+  "tags": []
+}
